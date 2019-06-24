@@ -1,0 +1,525 @@
+const mongoose=require('mongoose')
+
+//data base coonection require
+require('../Config/dbconfig')
+
+//schema require
+require('../Database/schema/users')
+require('../Database/schema/contactus')
+require('../Database/schema/propertydata')
+
+// model require
+const user = mongoose.model('Users');
+const Contactus=mongoose.model('Contactus')
+const propertyData=mongoose.model('propertySchema')
+// for signup use
+var bcrypt = require('bcryptjs');
+var saltRounds=10;
+var async = require("async");
+var jwt = require('jsonwebtoken'); // used to create, sign, and verify tokens
+var config = require('./config');
+var upload=require('./upload');
+var nodemailer = require('nodemailer');
+const path   = require('path');
+
+
+
+module.exports.home=(req,res)=>{
+    console.log("home ejs file")
+    res.render('home');
+}
+
+module.exports.Signup=(req,res)=>{
+    console.log("req accept",req.body);
+    try{
+        if(req.body.email==''){
+            console.log("inside")
+            return res.send({error:"email id required"})
+           
+        }
+        else{
+            user.findOne({email:req.body.email}).then((result)=>{
+                console.log("user result",result);  
+                if(result!=null){
+                    return res.send({result:"user exist"})
+                }else{
+                    bcrypt.hash(req.body.pass,  saltRounds, function(err, hash) {
+                        if(err){
+                            return res.status(404).json({error: "password not found"});
+                        }
+                        else{
+                            if(req.body.remember==''){
+                                req.body.remember=false;
+                            }
+                            async.series({
+                                user : function(callback){
+                                    const mydata = {
+                                        user_name: req.body.name,
+                                        email: req.body.email,
+                                        password: hash,
+                                        repeatpassword: hash,
+                                        comments: [{email: req.body.email , pincode:"210427"}],
+                                        remember: req.body.remember, 
+                                        account_status:0,  
+                                    }
+                                    new user(mydata).save().then((data)=>{
+                                            
+                                        var token = jwt.sign({ id: data._id }, config.secret, {
+                                            expiresIn: 86400 // expires in 24 hours
+                                        });
+                                        res.status(200).send({ auth: true, token: token,result:'signup successful'});
+                                        console.log('succefull data');
+                                        var transporter = nodemailer.createTransport({
+                                            service: 'gmail',
+                                            auth: {
+                                                    user: 'jssaurabh.gupta786@gmail.com',
+                                                    pass: 'Kumar@123'
+                                               }
+                                        });
+                                        var maillist=[mydata.email, 'jssaurabh.gupta786@gmail.com'];
+                                        const mailOptions = {
+                                            from: 'jssaurabh.gupta786@gmail.com', // sender address
+                                            to: maillist, // list of receivers
+                                            subject: 'Sending Email using saurabhProperty',
+                                            text: 'you are success fully signup! in "" ',
+                                            //   + mydata.email + "your password : "+req.body.pass,
+                                            html:'<p>Hello '+mydata.user_name+'</p><p>your user_id and password for <strong>Gero Estate<strong></p><p>Your Email: <span> '+ mydata.email+'</span></p><p>your password :<span>'+req.body.pass+'</span></p><a style="border:1px solid gray;color:white; border-radius:4px; padding-top:10px;padding-bottom:10px;padding-left:5px;padding-right:5px; text-decoration:none;;background-color:#ff8000;" href="http://localhost:5050/api/activateAccount/'+mydata.email+'?account_status='+1+'" >Activate your Account</a> <p>  </p>'
+                                        };                                                                                                                                                                                                                                                                                                                                                                                                               //http://localhost:5050/api/activateAccount?account_status='+1+'&'+'email='+mydata.email+'"  for query parameter
+                                        transporter.sendMail(mailOptions, function (err, info) {
+                                        if(err)
+                                           {
+                                            console.log('error to send mail',err);
+                                           }
+                                        else{
+                                            console.log('Email sent: ' + info.response);
+                                        }
+                                        });
+                                    }).catch((error)=>{
+                                        console.log("data not save")
+                                        return res.status(401).json({error: error});
+                                    })
+                                }         
+                            })
+                        }
+                    });
+                }
+            }).catch((error)=>{
+                return res.status(401).json({error: error});
+            })
+        }
+    }
+    catch(err){
+        return res.status(401).json({error: err});
+    }
+}
+module.exports.ActivateAccount=(req,res)=>{ //http://localhost:5050/api/activateAccount/saurabh.gup890@gmail.com?account_status=1  {this is url for send data using params}
+                                             //http://localhost:5050/api/activateAccount?account_status='+1+'&'+'email='+mydata.email+'"  
+    console.log("login body",req.query);            //for postman ===> http://localhost:5050/api/activateAccount?account_status=1&age=23
+    console.log("path pass",req.params);
+    try{
+        if(req.query.account_status&&req.params.email){
+            user.updateOne({email:req.params.email},{$set:{account_status:req.query.account_status}}).then((result)=>{
+                if(result){
+                    console.log("your account activate")
+                    return res.send('your account activate you can login now');
+                }
+                else{
+                    console.log("your account not activate")
+                    return res.send({err:'somthing went to error'});
+                }
+            })
+        } 
+        else{
+            return res.send({message:'data not found'});
+        }  
+    }catch(err){
+        return res.status(401).json({error: err});
+    }
+
+}
+module.exports.Login=(req,res)=>{
+    console.log("login body",req.body)
+    try{
+        user.findOne({email:req.body.email}).then((result)=>{
+            console.log("result find",result)
+            const user_data={
+                user_name:result.user_name,
+                email: result.email,
+                account_status:result.account_status
+            }
+         
+            if(result!=null){
+                console.log("result find password",result.password)
+                if(result.account_status==0){
+                    return res.send({message:'your account not activate'});
+                }else{
+                    bcrypt.compare(req.body.password,result.password,(error,result)=>{
+                        console.log("result find bcrypt",result,error);
+                        if(result){
+                            console.log("Sam", result);
+                            var token = jwt.sign({ id: result._id }, config.secret, {
+                                expiresIn: 86400 // expires in 24 hours
+                            });
+                            console.log("tokennnnnnnnnnnnn",token)
+                            res.status(200).send({ auth: true, token: token,data:'login successful' ,user_data});      
+                        }
+                        else{
+                            return res.send({message:'password not match'});
+                        }
+                    })  
+                }
+            }else{
+                return res.status(404).send({message:"email not found"})
+            }
+        }).catch((err)=>{
+            return res.status(401).json({error:err})
+        })
+    }
+    catch(err){
+        return res.status(401).json({error:err});
+    }
+}
+
+
+module.exports.Logout=(req,res)=>{
+
+    console.log(req.session);
+    try{
+        req.session.destroy(function (err){
+            if (err) {
+                console.log(err);
+                res.send({
+                    error:err.message,
+                     res
+                    });
+            }
+            else {
+                //res.send('User logged out successfully!', res, {});
+                res.send({data:"User logged out successfully!"});
+            }
+        });
+    }
+    catch(err){
+        return res.status(401).json({error:err});
+    }
+}
+module.exports.Contactus=(req,res)=>{
+    console.log("hello data send",req.body)
+    try{
+      async.series({
+        Contactus:function(callback){
+            const formData = {
+                name: req.body.name,
+                email: req.body.email,
+                contact: req.body.contact,
+                address: req.body.address,
+                query: req.body.query
+            }
+            new Contactus(formData).save().then((data)=>{
+                if(data){
+                    var transporter = nodemailer.createTransport({
+                        service: 'gmail',
+                        auth: {
+                            user: 'jssaurabh.gupta786@gmail.com',
+                            pass: 'Kumar@123'
+                        }
+                    });
+                    var maillist = [formData.email, 'jssaurabh.gupta786@gmail.com'];
+                    var mailOptions = {
+                        from: 'jssaurabh.gupta786@gmail.com',
+                        to: maillist,
+                        subject: 'Sending Email using saurabhProperty',
+                        text: 'contact by ' + formData.email + " " + " " + formData.contact,
+
+                    };
+                    transporter.sendMail(mailOptions, function (error, info) {
+                        if (error) {
+                            console.log(error);
+                        }
+                        else {
+                            console.log('Email sent: ' + info.response);
+                        }
+                    });
+                    return res.status(200).send({data:"success full save contact"});
+                }
+                else{
+                    return res.status(401).json({error:err});
+                }
+            })
+        }
+      })
+    }
+    catch(err){
+        return res.status(401).json({error:err});
+    }
+}
+
+module.exports.ForgetPassword=(req,res)=>{
+    console.log("ForgetPassword body",req.body.email)
+   
+    try{
+        console.log("ForgetPassword body12",req.body.email)
+        user.findOne({email:req.body.email}).then((data)=>{
+            console.log("Forget data",data)
+            if(data!=null){
+                //mail varifie
+                console.log("ForgetPassword body12s",data)
+                var transporter = nodemailer.createTransport({
+                    service: 'gmail',
+                    auth: {
+                        user: 'jssaurabh.gupta786@gmail.com',
+                        pass: 'Kumar@123'
+                    }});
+                var maillist = [data.email, 'jssaurabh.gupta786@gmail.com'];
+                var mailOptions = {
+                    from: 'jssaurabh.gupta786@gmail.com',
+                    to:  maillist,
+                    subject: 'Sending Email using Node.js',
+                    text: 'you change your password!',
+                    html: '<b>Hello world?</b><br><a href="http://localhost:4200/changepassword?email='+data.email+'">My web</a>'
+                };
+                transporter.sendMail(mailOptions, function (error, info) {
+                    if (error) {
+                        console.log(error);
+                    }
+                    else {
+                        console.log('Email sent: ' + info.response);
+                    }
+                });
+                return res.status(200).send({res:"user exist"});
+            }
+            else{
+                // return res.status(404).send({err:"user not exist"});
+                return res.send({err:"user not exist"});
+            }
+
+        }).catch((err)=>{
+            return res.status(401).json({error:"email find error"});
+        })
+    }catch(err){
+        return res.status(401).json({error:err});
+    }
+}
+
+module.exports.ChangPassword=(req,res)=>{
+    console.log("ChangPassword data find",req.body,req.query,req.body.email)
+    try{
+        if(req.body.email&&req.body.pass&&req.body.repeatpass){
+            user.findOne({email:req.body.email}).then((data)=>{
+                if(data!=null){
+                    bcrypt.hash(req.body.pass,  saltRounds, function(err, hash) {
+                        user.updateOne({email:req.body.email},{ $set : {password:hash,repeatpassword:hash}}).then((result)=>{
+                            console.log("password chang result find",result);
+                            if(result!=null){
+                                return res.status(200).send({res:"this user found",message:"your password change"});
+                            }else{
+                                return res.send({err:"this user not found"}); 
+                            }
+
+                        }).catch((err)=>{
+                            return res.status(401).json({error:err,message:"somthing update wrong"}); 
+                        })
+                        
+                    })
+                }
+                else{
+                    return res.send({err:"this user not found"});
+                }
+            }).catch((err)=>{
+                return res.status(401).json({error:"user find error"});
+            })
+        }
+        else
+        {
+            return res.status(401).json({error:"all fields are required"}); 
+        }
+    }
+    catch(err){
+        return res.status(401).json({error:"somthing went to wrong"});   
+    }
+}
+
+module.exports.uplaod=(req,res,err)=>{
+    //  console.log("property data find",req.body,)
+    try{
+        upload(req, res, (err) => {
+      
+            //  console.log("inside upload",req.body,file)
+            if (err) {
+                res.render('home', {
+                    msg: err
+                });
+            }
+            else {
+                if (req.file == undefined) {
+                    res.render('home', {
+                        msg: 'Error: no file selected!'
+                    });
+                }
+                else {
+                    var fullPath = 'uploads/' + req.file.filename;
+                    // console.log("justrifie data",typeof(fullPath))
+                    // console.log("full path",fullPath,)
+                    // console.log("data inside way append for q",req.body)
+                    var helthPath='public/'+fullPath
+                    // console.log("image path",helthPath)
+                    const formData = {
+                        propertyimage:helthPath,
+                        propertyname:req.body.propertyname,
+                        propertyprice: req.body.propertyprice,
+                        phone: req.body.phone,
+                        propertydescreption: req.body.propertydescreption,
+                        propertystate: req.body.propertystate,
+                        propertycity: req.body.propertycity,
+                        propertystatus: req.body.propertystatus,
+                        propertyleaseperioud: req.body.propertyleaseperioud,
+                        propertyminbed: req.body.propertyminbed,
+                        propertyarea: req.body.propertyarea,
+                        propertySwimmingpool: req.body.propertySwimmingpool,
+                        propertyStories: req.body.propertyStories,
+                        propertyexit: req.body.propertyexit,
+                        propertyFireplace: req.body.propertyrireplace,
+                        propertylaundryroom: req.body.propertylaundryroom,
+                        propertyJogpath: req.body.propertyJogpath,
+                        propertyCeilings: req.body.propertyCeilings,
+                        propertyDualsink: req.body.propertyDualsink,
+                        propertyVideo1: req.body.propertyVideo1,
+                        propertyVideo2: req.body.propertyVideo2,
+                        propertyVideo3: req.body.propertyVideo3,
+                        // checkBox: req.body.checkBox,
+                    }
+                    new propertyData(formData).save().then((result)=>{
+                        // console.log("save data result",result)
+                        if (result) {
+                           
+                            res.send({err:"somthing error to send"}) 
+                        }else{
+                            console.log("send data result",result)
+                            res.send({res:result})
+                        }
+                    }).catch((error)=>{
+                        res.send({err:"somthing error to store data",error:error}) 
+                    })
+    
+                }
+            }
+        });
+    }
+    catch(err){
+        return res.status(401).json({error:"somthing went to wrong"});
+    }
+}
+
+module.exports.fileget = (req, res) =>  {
+    console.log("query params",res.query)
+    try{
+    propertyData.find({}).then((result)=>{
+        console.log("daata",result)
+        // console.log("image length",result.length)
+        //     let urls=result.map(x=>{
+        //         console.log(x.propertyimage)
+        //         return path.join('public/'+x.propertyimage,
+        //         )
+        //     });
+         res.send({res:result})
+    }).catch((err)=>{
+        res.send({res:"somthing went wrong"})
+    })
+    }
+    catch(err){
+        return res.status(401).json({error:"somthing went to wrong"});
+    }
+}
+
+module.exports.PropertyDeleteAll=(req,res)=>{
+    try{
+        propertyData.deleteMany({}).then((data)=>{
+        if(data){
+            console.log("dataaaaaaaa",data)
+            return res.send({data:"delete data"})
+        }else{
+            console.log("dataaaaaaaa",data)
+            return res.send({err:"not any thingdelete data"})
+        }
+        })
+    }
+    catch(err){
+        return res.status(401).json({error:"somthing went to wrong"});   
+    }
+}
+
+module.exports.PropertyDetailsGet=(req,res)=>{
+    console.log("query params",req.query['_id']);
+    try{
+        propertyData.find({_id:req.query['_id']}).then((result)=>{
+            console.log("daata",result)
+            // console.log("image length",result.length)
+            //     let urls=result.map(x=>{
+            //         console.log(x.propertyimage)
+            //         return path.join('public/'+x.propertyimage,
+            //         )
+            //     });
+             res.send({res:result})
+        }).catch((err)=>{
+            res.send({res:"somthing went wrong"})
+        })
+        }
+        catch(err){
+            return res.status(401).json({error:"somthing went to wrong"});
+        }
+
+}
+
+module.exports.SearchEmail=(req,res)=>{
+    console.log(req.body.email);
+    try{
+        user.findOne({email:req.body.email}).then((data)=>{
+            console.log("helll search bar",data)
+            if(data){
+                return res.send({message:"successfully found user",})
+            }else{
+                return res.send({message:"user not found"});
+            }
+        })
+    }catch(err){
+        return res.status(401).json({error:"somthing went to wrong"});
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ var cb0= (req, res,next)=> {
+    console.log('CB0');
+    res.send('Hello from cb0')
+    // res.send('Hello from CB0')
+    next();
+  }
+  
+ var cb1 = (req, res, next)=> {
+    console.log('CB1');
+    res.send('Hello from CB1')
+    next();
+  }
+  
+   var cb2 = (req, res)=> {
+    res.send('Hello from C!')
+  }
+  module.exports.Exmple=(cb0, cb1, cb2);

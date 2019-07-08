@@ -16,7 +16,7 @@ const upload =multer({storage :storage , limits:{filesize: 1000000},fileFilter :
   {
     checkFileType(file ,cb);
   }
-}).single('myImage');
+}).array('myImage',10);
 
 function checkFileType(file ,cb){
   const filetypes=/jpeg|jpg|png|gif/;

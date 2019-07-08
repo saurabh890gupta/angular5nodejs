@@ -13,8 +13,8 @@
                         <input type="text" (keyup)="searchEnter($event)"  class="form-control" placeholder="Search by name or city">
                     </div>
                 </div> 
-                
-        <ul class="pull-right">
+
+        <ul class="pull-right" *ngIf="isLoggedIn=='true'">
         <li (click)="openCart()"><a class="cart"><i class="fa fa-shopping-cart" id="cart"></i> Cart <span class="badge">{{count}}</span></a></li>
         </ul>
             </div>
@@ -32,11 +32,10 @@
                                 <label>Search:</label>
                                 <input type="text" ng-model="search" class="form-control" placeholder="Search">
                             </div> -->
-                            
                         <div class="row">
                             <div class="col-md-4">
                                 <div class="picture" (click)="detailsShow(data._id)">
-                                    <img  src="{{imgData[ind]}}" class="img-responsive" id="img001" alt="img" />
+                                    <img  src="{{'http://localhost:5050/'+ multiImageData[ind][0]}}" class="img-responsive" id="img001" alt="img" />
                                     <div class="insidepicture" >
                                         <h4>{{data.propertyname}} </h4>
                                         <span class="pull-left"><b>Rs.{{data.propertyprice}}</b></span> 
@@ -57,9 +56,9 @@
                                     <p><strong>City :</strong><span> {{data.propertycity}}</span></p>
                                     <p><strong>State :</strong><span> {{data.propertystate}}</span></p>
                                     <p><strong>Status :</strong><span> {{data.propertystatus}}</span></p>
-                                   <div class="addCART">
-                                    <button type="button" class="btn btn-success" (click)="addCart(ind,data.propertyname)" >Add Cart</button> 
-                                </div>
+                                    <div class="addCART" *ngIf="isLoggedIn=='true'">
+                                    <button type="button" class="btn btn-success" (click)="addCart(ind,data.propertyname,data.propertycity,data.propertystate,data.propertystatus,multiImageData[ind],data.propertyprice,data._id)" >Add Cart</button> 
+                                    </div>
                                 </div>
                             </div>
                         </div>

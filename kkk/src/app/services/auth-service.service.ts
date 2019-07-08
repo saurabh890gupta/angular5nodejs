@@ -9,14 +9,14 @@ const httpOptions = {
 
   })
 };
-const httpOption = {
-  headers: new HttpHeaders({
-    // 'enctype': 'multipart/form-data',
+// const httpOption = {
+//   headers: new HttpHeaders({
+//     // 'enctype': 'multipart/form-data',
 
-    'Content-Type': 'multipart/form-data',
-    // 'Accept': 'application/json',
-  })
-};
+//     'Content-Type': 'multipart/form-data',
+//     // 'Accept': 'application/json',
+//   })
+// };
 
 @Injectable({
   providedIn: 'root'
@@ -94,5 +94,76 @@ export class AuthServiceService {
       console.log('URL sdfss',URL)
       return this.http.post(URL,obj,httpOptions)
     }
+    submitCheckOut(checkOut,user_id){
+      console.log("check out data find",checkOut);
+      const URL=this.config.url +'billingAddress?user_id='+user_id+'';
+      console.log('URL sdfss',URL)
+      return this.http.post(URL,checkOut,httpOptions);
+    }
+    addressData(address_id){
+      console.log("check addressData",address_id);
+      const URL=this.config.url + 'getAddress?address_id='+address_id+'';
+      console.log('URL sdfss',URL);
+      return this.http.post(URL,httpOptions);
+    }
+    paymnetBuy(token){
+      console.log("token data found",token)
+      token={
+        id:token
+      }
+      console.log("token data found",token)
+      const URL=this.config.url + 'payme';
+            console.log('URL sdfss',URL);
+            return this.http.post(URL,token,httpOptions);
+    }
+    adminPanel(admin){
+      console.log("adim data ",admin);
 
+       const URL=this.config.url + 'admin';
+            console.log('URL sdfss',URL);
+            return this.http.post(URL,admin,httpOptions);
+
+    }
+    alldata(){
+      const URL=this.config.url + 'exmple';
+            console.log('URL sdfss',URL);
+            return this.http.get(URL,httpOptions);
+    }
+    deleteUserdata(id,ind){
+      console.log("hello get data ",id,ind)
+      const URL=this.config.url + 'deleteUserData?user_id='+id+'';
+      console.log('URL sdfss',URL);
+      return this.http.post(URL,httpOptions);
+    }
+    updateUserData(userdata){
+      console.log("adim data ",userdata);
+
+       const URL=this.config.url + 'updateUserData';
+            console.log('URL sdfss',URL);
+            return this.http.post(URL,userdata,httpOptions);
+    }
+    updatePropertyData(propertydata){
+      console.log("adim data ",propertydata);
+      const URL=this.config.url + 'updatePropertyData';
+      console.log('URL sdfss',URL);
+      return this.http.post(URL,propertydata,httpOptions);
+    }
+    deletePropertydata(id,ind){
+      console.log("hello get data ",id,ind)
+      const URL=this.config.url + 'deletePropertyData?property_id='+id+'';
+      console.log('URL sdfss',URL);
+      return this.http.post(URL,httpOptions);
+    }
+    updateContactData(contactdata){
+      console.log("adim data ",contactdata);
+      const URL=this.config.url + 'updateContactData';
+      console.log('URL sdfss',URL);
+      return this.http.post(URL,contactdata,httpOptions);
+    }
+    deleteContactdata(id,ind){
+      console.log("hello get data ",id,ind)
+      const URL=this.config.url + 'deleteContactData?contact_id='+id+'';
+      console.log('URL sdfss',URL);
+      return this.http.post(URL,httpOptions);
+    }
 }

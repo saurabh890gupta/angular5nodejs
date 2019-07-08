@@ -10,8 +10,9 @@ var users = new Schema({
     email:String,
     password:String,
     address:{
-    type:String,
-    default:"kumar gali"},
+            type:String,
+            default:"kumar gali"
+    },
     comments:[
         { email: String, 
             date: {

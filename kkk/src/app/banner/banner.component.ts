@@ -28,7 +28,7 @@ export class BannerComponent implements OnInit {
     // private ngZone: NgZone
   ) { }
 
-  ngOnInit() {
+  ngOnInit() {debugger
     
     this.isLoggedIn=localStorage.getItem('loggedIn');
     console.log(this.isLoggedIn,'isLoggedIn');
@@ -97,7 +97,7 @@ export class BannerComponent implements OnInit {
   // }
  
   // getAddress(latitude, longitude) {
-  //   this.geoCoder.geocode({ 'location': { lat: latitude, lng: longitude } }, (results, status) => {
+  //   this...geocode({ 'location': { lat: latitude, lng: longitude } }, (results, status) => {
   //     console.log(results);
   //     console.log(status);
   //     if (status === 'OK') {

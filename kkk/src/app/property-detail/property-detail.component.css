@@ -141,3 +141,11 @@ h1, .h1, h2, .h2, h3, .h3, h4, .h4 {
     padding-top: 15px;
     padding-bottom: 15px;
 }
+#img001{
+    height: 93px;
+    width: 93px;
+    object-fit: cover;
+    }
+    .profileImage{
+        padding-top: 6px;
+    }

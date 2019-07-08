@@ -32,29 +32,34 @@
                                       <div class="jumbotron">
                                           <div *ngIf="isSet(1)">
                                               <div class="row">
+                                                  
                                                   <div class="col-md-4">
+                                                        <div class="form-group">
+                                                        <label>User Profile Image <small>(required)</small></label>
                                                       <div class="picture">
                                                           <input type="file" class="input-file" name="propertyimage" id="file" fileinput="file" fileput="file" #fileInput name="myImage" (change)="fileSelected($event)" />
                                                           <div class="add-file"><i class="fa fa-plus" aria-hidden="true"></i><br> <span>Add File</span></div>
                                                           <img [src]="imageSrc" class="img-responsive add-file-img" />
                                                       </div>
+                                                     </div>
                                                   </div>
                                                   
                                                   <div class="col-md-8">
                                                       <div class="form-group">
                                                           <label>Property name <small>(required)</small></label>
-                                                          <input name="propertyname" type="text" class="form-control" placeholder="Super villa ..." [(ngModel)]="property.propertyname">{{propertyname}}
+                                                          <input name="propertyname" type="text" class="form-control" placeholder="Super villa ..." [(ngModel)]="property.propertyname">
                                                       
                                                       </div>
                                                       <div class="form-group">
                                                           <label>Property price <small>(required)</small></label>
-                                                          <input name="propertyprice" type="text" className="form-control" ref="propertyprice" id="propertyprice" placeholder="3330000" [(ngModel)]="property.propertyprice"  >
+                                                          <input name="propertyprice" type="text" class="form-control" ref="propertyprice" id="propertyprice" placeholder="3330000" [(ngModel)]="property.propertyprice"  >
                                                       
                                                       </div> 
                                                       <div class="form-group">
                                                           <label>Telephone <small>(empty if you wanna use default phone number)</small></label>
-                                                          <input name="phone" type="text" class="form-control" id="phone" min="10" maxLength="10" ref="phone"  placeholder="+632-221-2221" [(ngModel)]="property.phone" >
-                                                      </div>
+                                                          <input name="phone" type="text" class="form-control" id="phone" min="10" maxLength="10" ref="phone"  placeholder="+632-221-2221" [(ngModel)]="property.phone" (keyup)="PhoneCheck($event)">
+                                                          <p id="phonevarify"></p>
+                                                        </div>
       
                                                       <!-- <p><a class="btn btn-primary btn-lg" role="button">Learn more</a></p> -->
                                                   </div>
@@ -80,7 +85,7 @@
                                                   <div class="col-sm-3">
                                                       <div class="form-group">
                                                           <label>Property State :</label>
-                                                          <select id="lunchBegins" class="selectpicker" data-live-search="true" data-live-search-style="begins" title="Select your state" name="stateList" [(ngModel)]="property.propertystate" [ngModelOptions]="{standalone: true}" >
+                                                          <select id="lunchBegins"  class="selectpicker show-tick form-control" data-live-search="true" data-live-search-style="begins" title="Select your state" name="stateList" [(ngModel)]="property.propertystate" [ngModelOptions]="{standalone: true}" >
                                                             <option selected="true" disabled="disabled">Choose City</option>
                                                             <option *ngFor='let stateList of state' [ngValue]="stateList.name">
                                                               {{stateList.name}}
@@ -93,7 +98,7 @@
                                                   <div class="col-sm-3">
                                                       <div class="form-group">
                                                           <label>Property City :</label>
-                                                          <select id="lunchBegins" class="selectpicker" data-live-search="true" data-live-search-style="begins" title="Select your city" name="cityList"[(ngModel)]="property.propertycity" [ngModelOptions]="{standalone: true}" >
+                                                          <select id="lunchBegins"  class="selectpicker show-tick form-control" data-live-search="true" data-live-search-style="begins" title="Select your city" name="cityList"[(ngModel)]="property.propertycity" [ngModelOptions]="{standalone: true}" >
                                                             <option selected="true" disabled="disabled">Choose City</option>
                                                             <option *ngFor='let cityList of city' [ngValue]="cityList.name">
                                                               {{cityList.name}}
@@ -236,31 +241,24 @@
                                                    
                                           </div>
                                           <div *ngIf="isSet(3)" >
-                                              <div class="row">
-                                                  <div class="col-md-4">
-                                                      <!-- <div className="form-group" ng-controller="upload"> -->
-                                                          <!-- <label>Chose property image :</label>
-                                                           <input class="form-control" type="file" name="file-to-upload" ng-file-select="onFileSelect($files)" ng-model="obj.imageSrc"  > -->
-                                                               <!-- <input type="file" ng-file-select="onFileSelect($files)" ng-model="imageSrc" multiple /> -->
-                                                          <!-- <img ng-src="{{obj.imageSrc}}" style= "width:250px; height:200px;" />
-                                                      </div> -->
-                                                      <input  type="file" multiple  #fileInputs name="myImage"(change)="detectFiles($event)">
-                                                      <div id="content">
-                                                            <div id="scrollable"> 
-                                                                  
-                                                      <div *ngFor="let url of urls ; let ind=index">
-                                                            <img  [src]="url" class="rounded mb-3" width="234">
-                                                        </div>
-                                                        
-                                                           
-                                                        </div>
-                                                        </div>
-                                                        <p>Total Image: {{totalImage}}</p>
-                                                        <div *ngFor="let helImg of helImg">
+                                                <div class="row">
+                                                    <div class="col-md-4">
+                                                        <div class="form-group">
+                                                            <input  type="file" multiple  #fileInputs name="myImage"(change)="detectFiles($event)">
+                                                            <div id="content">
+                                                                <div id="scrollable">       
+                                                                    <div *ngFor="let url of urls ; let ind=index">
+                                                                        <img  [src]="url" class="rounded mb-3" width="234">
+                                                                    </div>   
+                                                                </div>
+                                                            </div>
+                                                            <p>Total Image: {{totalImage}}</p>
+                                                            <div *ngFor="let helImg of helImg">
                                                                 {{helImg.name}}
+                                                            </div>
                                                         </div>
-                                                  </div>  
-                                                  <div class="col-md-8">
+                                                    </div>  
+                                                    <div class="col-md-8">
                                                       <div class="form-group">
                                                           <label>Property video :</label>
                                                           <input type="text" class="form-control" placeholder="http:www.youtube.com, http:vimeo.com" name="video1"[(ngModel)]="property.propertyVideo1"/>
@@ -273,18 +271,16 @@
                                                       <div className="form-group">
                                                           <input type="text" class="form-control" placeholder="http:www.youtube.com, http:vimeo.com" name="video3" [(ngModel)]="property.propertyVideo3" />
                                                       </div>
-                                                  </div>   
-                                              </div>
-                                          <div class="space"></div>
-                                              <div class="pull-right">
+                                                    </div>   
+                                                </div>
+                                            <div class="space"></div>
+                                                <div class="pull-right">
                                                       <a (click)="setTab(4)" class='btn btn-next btn-primary' id="next" data-toggle="tab">next </a>
-                                                  </div>
-      
-                                                  <div class="pull-left">
+                                                </div>
+                                                <div class="pull-left">
                                                       <a (click)="setTab(2)" class='btn btn-next btn-primary' id="next"  data-toggle="tab">previous</a>
-                                                  </div>
-                                                   
-                                          </div>
+                                                </div>        
+                                            </div>
                                           
                                           <div *ngIf="isSet(4)" > 
                                               <h2 style="text-align:center"> Finished and submit </h2>

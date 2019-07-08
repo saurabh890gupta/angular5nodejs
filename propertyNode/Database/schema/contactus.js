@@ -8,6 +8,7 @@ var  Contactus= new Schema({
     contact:String,
     address:String,
     query:String,
+    user_id:String,
 },{collection:'Contactus'})
 
 module.exports=mongoose.model('Contactus', Contactus);

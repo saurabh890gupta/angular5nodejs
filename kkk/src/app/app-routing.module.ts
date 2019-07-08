@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { NgModule} from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import {LoginComponent} from './login/login.component';
 import {SignupComponent} from './signup/signup.component';
@@ -14,12 +14,32 @@ import { ChangepasswordComponent } from './changepassword/changepassword.compone
 import { HomeComponent} from './home/home.component';
 import { PropertyDetailComponent } from './property-detail/property-detail.component';
 //thats call routing
+import { OpenCartComponent } from './open-cart/open-cart.component';
+import { CheckoutComponent } from './checkout/checkout.component';
+import { PaymentpageComponent } from './paymentpage/paymentpage.component';
+import { AdminComponent } from './admin/admin.component';
+import { AdminPanelComponent } from './admin-panel/admin-panel.component';
+
 const routes: Routes = [
   { 
+
     path: '', 
-    pathMatch:'full',
-    component: HomeComponent 
+    component: HomeComponent,
+    pathMatch:'full', 
+    //  children : [{path: 'admin', component: AdminComponent ,outlet: 'admin'}]
+
   }, 
+  { 
+    path: 'admin', 
+    pathMatch:'full',
+    component: AdminComponent 
+  },
+  { 
+    path: 'adminPanel', 
+    pathMatch:'full',
+    component: AdminPanelComponent,
+  
+  },
   { 
     path: 'login', 
     pathMatch:'full',
@@ -69,6 +89,24 @@ const routes: Routes = [
     path: 'propertydetail',
     pathMatch:'full',
     component: PropertyDetailComponent
+   
+  },
+  {
+    path: 'openCart',
+    pathMatch:'full',
+    component: OpenCartComponent
+   
+  },
+  {
+    path: 'checkOut',
+    pathMatch:'full',
+    component: CheckoutComponent
+   
+  },
+  {
+    path: 'Paymentpage',
+    pathMatch:'full',
+    component: PaymentpageComponent
    
   },
 

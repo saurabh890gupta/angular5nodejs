@@ -20,4 +20,16 @@ router1.get('/api/propertydeleteAll',control.PropertyDeleteAll);
 router1.get('/api/exmple',control.Exmple);
 router1.get('/api/activateAccount/:email?',control.ActivateAccount) //this use params( /:email) and query(?)
 router1.post('/api/searchemail',control.SearchEmail)
+router1.post('/api/billingAddress',control.BillingAddress);
+router1.post('/api/getAddress',control.GetAddress)
+router1.post('/api/payme',control.Payme);
+router1.post('/api/fakemail',control.FakeMail);
+router1.all('/api/GetDataby',control.getdataby);
+router1.post('/api/admin',control.Admin);
+router1.post('/api/deleteUserData',control.DeleteUserData);
+router1.post('/api/updateUserData',control.UpdateUserData);
+router1.post('/api/deletePropertyData',control.DeletePropertyData);
+router1.post('/api/updatePropertyData',control.UpdatePropertyData);
+router1.post('/api/deleteContactData',control.DeleteContactData);
+router1.post('/api/updateContactData',control.UpdateContactData);
 module.exports=router1;

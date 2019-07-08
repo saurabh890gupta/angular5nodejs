@@ -14,6 +14,8 @@ export class PropertyComponent implements OnInit {
   getimg:File;
   urls = [];
   totalImage:any;
+  user_data:any;
+  user_id:any;
   property={
     propertyname:'',
     propertyprice:'',
@@ -37,13 +39,17 @@ export class PropertyComponent implements OnInit {
     propertyVideo2:'',
     propertyVideo3:'',
     checkBox:'',
+    user_id:this.user_id,
   }
   constructor(  private authService :AuthServiceService,
     private router: Router) { }
       isLoggedIn:any;
-        ngOnInit() {
+        ngOnInit() { 
 
-   // this.isLoggedIn=localStorage.getItem('loggedIn');
+   this.user_data=sessionStorage.getItem('user');
+   console.log("user data find for property",JSON.parse(this.user_data).user_id);
+   this.user_id=JSON.parse(this.user_data).user_id;
+   console.log(" this.user_id find for property", this.user_id)
   }
  //for tab system of property  
   tab = 1;
@@ -144,12 +150,13 @@ propertySubmit(property){debugger
     return false;
   }
   console.log("propertyyyyyyyyyyyyyy",property,this.selectedFile)
+  property.user_id=this.user_id;
   var fd = new FormData();
   fd.append('myImage',this.selectedFile,);
-  // this.helImg.forEach((data)=>{
-  //    console.log("dataaaaaaaaaaaaaaa",data);
-  //   fd.append('myImage',data);
-  // })
+  this.helImg.forEach((data)=>{
+     console.log("dataaaaaaaaaaaaaaa",data);
+    fd.append('myImage',data);
+  })
   // fd.append('myImage',this.helImg);
   // fd.append("propertyname",property.propertyname);
   for (var key in property) {
@@ -196,5 +203,20 @@ propertySubmit(property){debugger
           }
     }
   }
-
+  PhoneCheck(event) {
+    const value=event.target.value;
+    console.log("jejsdjjjs",value);
+    var regex="^([6-9]){10}$";
+    var text="Number should be 10 degits and Not Start From [0-5]";
+    if(!(value.match(regex))){
+      document.getElementById("phonevarify").innerHTML=text;
+      return false;
+    }
+    else{
+      document.getElementById("phonevarify").innerHTML="";
+      this.property.phone=value;
+      console.log("sddddddddddddddd", this.property.phone)
+      return false;
+    }
+  }
 }

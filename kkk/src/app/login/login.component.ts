@@ -21,7 +21,6 @@ export class LoginComponent implements OnInit {
   ngOnInit() {
     //this is use for true false value of local storage in header
       this.isLoggedIn=localStorage.getItem('loggedIn');
-      
     //this use for back button after login not redirect home page
       if(sessionStorage.getItem('token')){
         this.router.navigate(['banner']);

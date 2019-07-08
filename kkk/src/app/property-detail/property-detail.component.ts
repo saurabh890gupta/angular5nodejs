@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router'
 import { parseTemplate } from '@angular/compiler';
 import {AuthServiceService} from '../services/auth-service.service'
-
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 @Component({
   selector: 'app-property-detail',
   templateUrl: './property-detail.component.html',
@@ -14,6 +14,7 @@ export class PropertyDetailComponent implements OnInit {
   data:any;
   somthing:any;
   imgData=[];
+  multiImageData=[];
   ownerDetails={
     propertyname:'',
     phone:'',
@@ -40,41 +41,38 @@ export class PropertyDetailComponent implements OnInit {
    
 
   }
+  safeSrc: SafeResourceUrl;
   constructor(
     public route:ActivatedRoute,
     public authService:AuthServiceService,
+    private sanitizer: DomSanitizer
   ) { }
 
   ngOnInit() {
-  //   this.id= this.route.snapshot.paramMap.get('ind'); 
-  //   this.data= this.route.snapshot.paramMap.get('data'); 
-  //   // this.id = this.route.params['id'];
-  //   // this.data =this.route.snapshot.data['data'];
-  //   console.log("held dtd",this.id,this.data)
-  //   // this.sub = this.route.queryParams.subscribe(params => {
-  //   //   this.id = +params['ind'] || 0;
-  //   //   this.data = +params['data'];
-  //   // });
-  //   // console.log("held dtd",this.id,this.data)
-  
     this.sub = this.route.queryParams.subscribe(params => {
     // this.id = +params['ind']; // (+) converts string 'id' to a number
-    console.log("held dtd",params.ind)
-      
-
-    this.propertyGetData(params.ind);
-
-    // In a real app: dispatch action to load the details here.
+      console.log("held dtd",params.ind)
+       this.propertyGetData(params.ind);
     });
 
-    
+    this.safeSrc =  this.sanitizer.bypassSecurityTrustResourceUrl("https://www.youtube.com/embed/YRGc21Uo8sw");
   }
-   
+  // https://www.youtube.com/embed/0bAVd9jJE2Q
   propertyGetData(params){
     this.authService.getPropertydata(params).subscribe((response:any)=>{
-      console.log("hello data found",response)
+      // console.log("hello data found",response)
       this.somthing=response.res
-      console.log("respons555", response.res)
+       console.log("respons555", response.res)
+     
+    //this is for multiple image
+      response.res.forEach((multiImage)=>{
+          console.log("data find according array",multiImage)
+          multiImage.propertyShowImage.forEach((insideData)=>{
+            this.multiImageData.push('http://localhost:5050/' + insideData)
+          })
+       })
+      console.log("hello get all data",this.multiImageData)
+    //this is for multiple image 
 
       response.res.forEach((data)=>{
         console.log("response response",data.propertyname)
@@ -83,7 +81,8 @@ export class PropertyDetailComponent implements OnInit {
         
       })
      
-      console.log("data", this.imgData,this.ownerDetails);
+      // console.log("data", this.imgData);
     })
   }
+ 
 }

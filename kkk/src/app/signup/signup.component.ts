@@ -54,15 +54,19 @@ isLoggedIn:any;
           //  alert("you ");
           
             if(response.result=="signup successful"){
-              if(response.token){
-                sessionStorage.setItem('token',response.token)
-              }
-                localStorage.setItem('loggedIn','true');
-                this.isLoggedIn=localStorage.getItem('loggedIn');
-                console.log("jkhjkhjkhjk", this.isLoggedIn)
-                location.reload();
-                alert("you are success fully login")    
-                this.router.navigate(['banner']);
+              // if(response.token){
+              //   sessionStorage.setItem('token',response.token)
+              // }
+              //   localStorage.setItem('loggedIn','true');
+              //   this.isLoggedIn=localStorage.getItem('loggedIn');
+              //   console.log("jkhjkhjkhjk", this.isLoggedIn)
+                // location.reload();
+                // alert("you are success fully ")    
+                // this.router.navigate(['banner']);
+                alert("you are success fully signup plz check your email and active your account")    
+                window.location.reload();
+                window.open('http://gmail.com');
+                // this.router.navigate(['login']);
             }
             else{
               alert("somthing error");    

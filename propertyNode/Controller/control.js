@@ -33,7 +33,7 @@ var stripe = require('stripe')(keySecret);
 
 const sgMail = require('@sendgrid/mail');
  sgMail.setApiKey('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');
-//  sgMail.setApiKey('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')
+
 // by sendGrid send mail for fake
 module.exports.FakeMail=(req,res)=>{
     console.log("hel;lo get dat")
@@ -104,7 +104,7 @@ module.exports.Signup=(req,res)=>{
                                             service: 'gmail',
                                             auth: {
                                                     user: 'jssaurabh.gupta786@gmail.com',
-                                                    pass: 'Kumar@123'
+                                                    pass: 'password'
                                                }
                                         });
                                         var maillist=[mydata.email, 'jssaurabh.gupta786@gmail.com'];
@@ -254,7 +254,7 @@ module.exports.Contactus=(req,res)=>{
                         service: 'gmail',
                         auth: {
                             user: 'jssaurabh.gupta786@gmail.com',
-                            pass: 'Kumar@123'
+                            pass: 'password'
                         }
                     });
                     var maillist = [formData.email, 'jssaurabh.gupta786@gmail.com'];
@@ -301,7 +301,7 @@ module.exports.ForgetPassword=(req,res)=>{
                     service: 'gmail',
                     auth: {
                         user: 'jssaurabh.gupta786@gmail.com',
-                        pass: 'Kumar@123'
+                        pass: 'password'
                     }});
                 var maillist = [data.email, 'jssaurabh.gupta786@gmail.com'];
                 var mailOptions = {

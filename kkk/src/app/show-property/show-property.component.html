@@ -3,7 +3,6 @@
         <div class="row">
           <h3 style="text-align:center">Property Details</h3>
             <div class="Property-title-line">
-          
                 <div class="form-inline">
                     <h4>Search Data According To Own Way:</h4>
                     
@@ -13,10 +12,9 @@
                         <input type="text" (keyup)="searchEnter($event)"  class="form-control" placeholder="Search by name or city">
                     </div>
                 </div> 
-
-        <ul class="pull-right" *ngIf="isLoggedIn=='true'">
-        <li (click)="openCart()"><a class="cart"><i class="fa fa-shopping-cart" id="cart"></i> Cart <span class="badge">{{count}}</span></a></li>
-        </ul>
+                <ul class="pull-right" *ngIf="isLoggedIn=='true'">
+                    <li (click)="openCart()"><a class="cart"><i class="fa fa-shopping-cart" id="cart"></i> Cart <span class="badge">{{count}}</span></a></li>
+                </ul>
             </div>
             <div style="padding-top:12px;"></div>
             <div id="content">

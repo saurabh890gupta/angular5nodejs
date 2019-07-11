@@ -20,6 +20,8 @@ export class AdminPanelComponent implements OnInit {
   userConfig:any;
   contactConfig:any;
   propertyConfig:any;
+  billingConfig:any;
+  billingData:any;
   copyuserdata={
     _id:'',
     user_name:'',
@@ -46,6 +48,20 @@ export class AdminPanelComponent implements OnInit {
     contact:'',
     address:'',
     query:''
+  }
+  copybillingData={
+    address:'',
+    city: '',
+    country: '',
+    firstName: '',
+    lastName: '',
+    mobile: '',
+    paymentMode: '',
+    postcode: '',
+    state: '',
+    termCondition: '',
+    user_id: '', 
+    _id:''
   }
   constructor(public authService:AuthServiceService,public router:Router) { }
 
@@ -88,18 +104,21 @@ export class AdminPanelComponent implements OnInit {
   tempUserdata=[]
   tempPropertyData=[]
   tempContactData=[]
+  tempBillingData=[]
   allData(){
       this.authService.alldata().subscribe((data:any)=>{
         if(data){
           console.log("all daata find",data)
           this.contactData=data.contactus;
+          this.billingData=data.billingData;
+          this.tempBillingData=this.billingData;
           this.userData=data.user;
           this.tempUserdata=this.userData;
-          this.propertyData =data.property
-          this.tempPropertyData=this.propertyData
+          this.propertyData =data.property;
+          this.tempPropertyData=this.propertyData;
           console.log("this.contactDatazzzzzzzzzzzzz",this.copyuserdata);
           this.tempContactData=this.contactData
-          console.log("this.contactData", this.contactData , this.userData,this.propertyData, );
+          console.log("this.contactData",this.billingData, this.tempBillingData, this.contactData , this.userData,this.propertyData, );
          
           this.userConfig = {
             itemsPerPage: 5,
@@ -116,6 +135,11 @@ export class AdminPanelComponent implements OnInit {
             itemsPerPage: 5,
             currentPage: 1,
            totalItems: this.contactData.count, 
+          }
+          this.billingConfig = {
+            itemsPerPage: 5,
+            currentPage: 1,
+           totalItems: this.billingData.count, 
           }
         }else{
           console.log("all daata not find",)
@@ -402,6 +426,110 @@ export class AdminPanelComponent implements OnInit {
        
        }
 //end this is for third contacttab tab
+
+
+//start this is for four billingtab tab
+
+billingEdit(inde,userid){
+  console.log("any gzb",inde)
+  this.rowIndexbilling=inde
+  this.roweditId=userid;
+  this.optionData=false;
+}
+rowIndexbilling
+billingSave(inde,billingdata){
+  this.rowIndexbilling="46545646";
+  this.optionData=true;
+  console.log("hello data get",billingdata)
+  // const propertyUpdate={
+  //   propertyId:contactdata._id,
+  //   propertyname:contactdata.propertyname,
+  //   propertycity:contactdata.propertycity,
+  //   propertyprice:contactdata.propertyprice,
+  //   propertystatus:contactdata.propertystatus,
+  //   propertyarea:contactdata.propertyarea,
+  // }
+  console.log("propertydata cccccccccccc",billingdata)
+  
+  console.log("ind userdata",inde,billingdata);
+  if(billingdata){
+    this.authService.updateBillingData(billingdata).subscribe((data:any)=>{
+      if(data.message=="update successfully"
+      ){
+        console.log("data find",data)
+         alert("user data update");
+      }else{
+
+      }
+    })
+  }else{
+
+  }
+  
+}
+
+
+billingView(inde){debugger
+  console.log("helolo fsdadasd",inde,this.contactData[0]._id)
+    this.showInd=inde
+    console.log(this.showInd);
+    this.copybillingData._id=this.billingData[this.showInd]._id;
+    this.copybillingData.firstName=this.billingData[this.showInd].firstName;
+    this.copybillingData.lastName=this.billingData[this.showInd].lastName;
+    this.copybillingData.mobile=this.billingData[this.showInd].mobile;
+    this.copybillingData.address =this.billingData[this.showInd].address;
+    this.copybillingData.paymentMode=this.billingData[this.showInd].paymentMode;
+    this.copybillingData.state=this.billingData[this.showInd].state;
+    this.copybillingData.postcode =this.billingData[this.showInd].postcode;
+    this.copybillingData.country=this.billingData[this.showInd].country;
+    this.copybillingData.city=this.billingData[this.showInd].city;
+    this.copybillingData.user_id=this.billingData[this.showInd].user_id;
+    
+  }
+  billingDeleteData(id,inde){
+    console.log("hello get data define",id)
+    this.authService.deleteBillingdata(id,inde).subscribe((res:any)=>{
+     console.log("data find daTA gert ",res)
+      if(res.message=="data delete successfull"){
+        alert("user data delete succfully");
+         location.reload();    
+      }else{
+       alert("user data not delete");
+      }
+ 
+    })
+   }
+
+   searchEnterBilling(event){
+    const value=event.target.value;
+       console.log("valueeee",value);
+       this.IsVisible=false;
+       if(value==undefined){
+         this.allData()
+         return
+       }
+       if(value==''){
+         this.allData()
+       }
+       if (value.length>=1) { 
+         this.billingData= this.tempBillingData.filter(f=>{
+      
+           if(f && f.firstName.toLowerCase().indexOf(value.toLowerCase())>-1 || f.city.toLowerCase().indexOf(value.toLowerCase())>-1){
+           // if(f && f.propertyname.indexOf(value)>-1 || f.propertycity.indexOf(value)>-1){  //WITH OUT UPPER CASE
+           console.log("ffffffffffff",f)  
+           return f;
+           }
+         })
+         if(this.billingData.length==0){
+           this.IsVisible=true;
+          }
+       }
+       else{
+         this.billingData=[];
+       }
+   
+   }
+//end this is for third contacttab tab
  
 
 //start this is for pagination chang function
@@ -414,6 +542,9 @@ export class AdminPanelComponent implements OnInit {
         }
         pageChanged2(event){
           this.contactConfig.currentPage = event;
+        }
+        pageChanged3(event){
+          this.billingConfig.currentPage = event;
         }
 
 

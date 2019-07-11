@@ -32,4 +32,6 @@ router1.post('/api/deletePropertyData',control.DeletePropertyData);
 router1.post('/api/updatePropertyData',control.UpdatePropertyData);
 router1.post('/api/deleteContactData',control.DeleteContactData);
 router1.post('/api/updateContactData',control.UpdateContactData);
+router1.post('/api/deleteBillingData',control.DeleteBillingData);
+router1.post('/api/updateBillingData',control.UpdateBillingData);
 module.exports=router1;

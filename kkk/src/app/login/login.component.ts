@@ -69,9 +69,9 @@ export class LoginComponent implements OnInit {
         localStorage.setItem('loggedIn','true');
         this.isLoggedIn=localStorage.getItem('loggedIn');
        this.user_details=sessionStorage.getItem('user');
-       this.user_email=JSON.parse(this.user_details)
-       console.log("fjkdhvndjk",this.user_email.email)
-        console.log("jkhjkhjkhjk", this.isLoggedIn)
+       this.user_email=JSON.parse(this.user_details);
+       console.log("fjkdhvndjk",this.user_email.email);
+        console.log("jkhjkhjkhjk", this.isLoggedIn);
         location.reload();//this is necessary bcz localstorag value not isloggedin update
         alert("you are success fully login")    
         this.router.navigate(['banner']);

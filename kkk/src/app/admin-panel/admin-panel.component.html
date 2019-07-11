@@ -431,9 +431,143 @@
                     </div>
                     <div *ngIf="isSet==4">
                         <div class="row">
-                            <p>Address Details</p>
+                            <p>Billing Address Details</p>
                             <div class="col-md-12">
-                            Address Details
+                                    <form>
+            
+                                            <div class="form-group">
+                                                <label>Search:</label>
+                                                <input type="text" class="form-control" placeholder="Search the address by firstname or city" (keyup)="searchEnterBilling($event)">
+                                            </div>
+                                            <div class="table-responsive"> 
+                                                <div class="nofound" *ngIf="IsVisible">
+                                                        <p >No data found</p>
+                                                </div> 
+                                                    <table class="table table-bordered table-hover table-striped" *ngIf="!IsVisible">  
+                                                
+                                                        <thead >  
+                                                            <tr> 
+                                                                <th>Serial.No</th>   
+                                                                <!-- <th>Id</th>       -->
+                                                                <th>FirstName</th>  
+                                                                <th>LastName:</th>  
+                                                                <th>Contact</th> 
+                                                                <th>Address</th>
+                                                                <th>postcode</th>
+                                                                <th>City</th>
+                                                                <th>Country</th>
+                                                                <th style="text-align:center">Action</th>  
+                                                            </tr>     
+                                                        </thead> 
+                                                
+                                                        <tbody *ngFor="let billingdata of this.billingData | paginate:billingConfig;let inde=index ">
+                                                        
+                                                            <tr>   
+                                                                <td>
+                                                                    <!-- {{inde+1}} -->
+                                                                    <div >{{this.billingConfig.itemsPerPage * (this.billingConfig.currentPage - 1) + inde+1}}</div>
+                                                                </td>
+                                                                <!-- <td>
+                                                                    <div>{{propertydata._id}}</div>
+                                                                </td> -->
+                                                                <td>
+                                                                        <div *ngIf="inde==rowIndexbilling">
+                                                                                <input type="text" [(ngModel)]="billingdata.firstName" name="billingdata.firstName">
+                                                                        </div>
+                                                                    <div *ngIf="inde!=rowIndexbilling">   
+                                                                        {{billingdata.firstName}}
+                                                                    </div> 
+                                                                </td>
+                                                                <td> 
+                                                                        <div *ngIf="inde==rowIndexbilling">
+                                                                                <input type="text" [(ngModel)]="billingdata.lastName" name="billingdata.lastName">
+                                                                        </div>
+                                                                    <div *ngIf="inde!=rowIndexbilling"> 
+                                                                            {{billingdata.lastName}}
+                                                                    </div>
+                                                                </td>
+                                                                <td>  
+                                                                    <div *ngIf="inde==rowIndexbilling">
+                                                                        <input type="text" [(ngModel)]="billingdata.mobile" name="billingdata.mobile">
+                                                                    </div>
+                                                                    <div *ngIf="inde!=rowIndexbilling"> 
+                                                                            {{billingdata.mobile}}
+                                                                    </div>
+                                                                </td>
+                                                                <td> 
+                                                                    <div *ngIf="inde==rowIndexbilling">
+                                                                        <input type="text" [(ngModel)]="billingdata.address" name="billingdata.address">
+                                                                    </div>
+                                                                    <div *ngIf="inde!=rowIndexbilling"> 
+                                                                       {{billingdata.address}}
+                                                                    </div>
+                                                                
+                                                                </td>
+                                                                <td> 
+                                                                    <div *ngIf="inde==rowIndexbilling">
+                                                                        <input type="text" [(ngModel)]="billingdata.postcode" name="billingdata.postcode">
+                                                                    </div>
+                                                                    <div *ngIf="inde!=rowIndexbilling">
+                                                                        {{billingdata.postcode}}
+                                                                    </div>
+                                                                          
+                                                                </td>
+                                                                <td> 
+                                                                        <div *ngIf="inde==rowIndexbilling">
+                                                                            <input type="text" [(ngModel)]="billingdata.city" name="billingdata.city">
+                                                                        </div>
+                                                                        <div *ngIf="inde!=rowIndexbilling">
+                                                                            {{billingdata.city}}
+                                                                        </div>
+                                                                              
+                                                                    </td>
+                                                                    <td> 
+                                                                            <div *ngIf="inde==rowIndexbilling">
+                                                                                <input type="text" [(ngModel)]="billingdata.country" name="billingdata.country">
+                                                                            </div>
+                                                                            <div *ngIf="inde!=rowIndexbilling">
+                                                                                {{billingdata.country}}
+                                                                            </div>
+                                                                                  
+                                                                        </td>
+                                                                <td>
+                                                                   
+                                                                    <!-- data-toggle="modal" data-target="#exampleModalLong" -->
+                                                                    <li><a (click)="billingView(inde)" data-toggle="modal" data-target="#exampleModalLongBilling">View</a></li>
+        
+                                                                    <li ><a (click)="billingEdit(inde)" *ngIf="optionData==true" >Edit</a></li>
+                                                                    <li *ngIf="inde!=rowIndexbilling"><a (click)="billingEdit(inde)" *ngIf="optionData==false">Edit</a></li>
+                                                                    
+                                                                    <li *ngIf="inde==rowIndexbilling"><a (click)="billingSave(inde,billingdata)" *ngIf="optionData==false">Save</a></li>
+                                                                    
+                                                                    <li ><a (click)="billingDeleteData(billingdata._id,inde)">Delete </a>
+                                                                    
+                                                                    </li>
+                                                                
+                                                                </td>
+                                                            </tr>    
+                                                        </tbody> 
+                                                    </table> 
+                                                    <tfoot >
+                                                        <td colspan="3" >
+                                                            <div  class="pull-right">
+                                                                <pagination-controls (pageChange)="pageChanged3($event)" ></pagination-controls>
+                                                            <!-- <ul>
+                                                                <li ng-class="prevPageDisabled()">
+                                                                <a href (click)="prevPage()">« Prev</a>
+                                                                </li>
+                                                                <li ng-repeat="n in range()" ng-class="{active: n == currentPage}" ng-click="setPage(n)">
+                                                                <a href="#"></a>
+                                                                </li>
+                                                                <li ng-class="nextPageDisabled()">
+                                                                <a href ng-click="nextPage()">Next »</a>
+                                                                </li>
+                                                            </ul> -->
+                                                            </div>
+                                                        </td>
+                                                    </tfoot> 
+                                            </div>  
+                                        </form>
                             </div>
                         </div>
                     </div>
@@ -465,7 +599,7 @@
     </div> 
 <!-- this. for User Details model-->
     
-<div class="modal fade" id="exampleModalLongProperty" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+    <div class="modal fade" id="exampleModalLongProperty" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
         <div class="modal-dialog" role="document">
           <div class="modal-content">
             <div class="modal-header">
@@ -490,8 +624,8 @@
         </div>
     </div> 
     <div class="modal fade" id="exampleModalLongContact" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
-            <div class="modal-dialog" role="document">
-              <div class="modal-content">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
                 <div class="modal-header">
                  <strong>Contact Details</strong> 
                   <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -506,6 +640,30 @@
                     <p><strong> Address : </strong> {{this.copycontactData.address}}</p> 
                     <p><strong> Query : </strong> {{this.copycontactData.query}}</p> 
                 </div>  
-              </div>
+            </div>
+        </div>
+    </div> 
+    <div class="modal fade" id="exampleModalLongBilling" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                     <strong>Contact Details</strong> 
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <div class="modal-body"> 
+                        <p> <strong> Billing_id: </strong> {{ this.copybillingData._id}}</p> 
+                        <p> <strong> Full Name: </strong> {{  this.copybillingData.firstName}} {{this.copybillingData.lastName}} </p>
+                        <p> <strong> Contact : </strong> {{   this.copybillingData.mobile}}</p> 
+                        <p><strong> Address : </strong> {{ this.copybillingData.address}}</p> 
+                        <p> <strong> PinCode: </strong> {{ this.copybillingData.postcode }}</p>
+                        <p><strong> City: </strong> {{ this.copybillingData.city}}</p> 
+                        <p> <strong> State: </strong> {{ this.copybillingData.state}}</p>
+                        <p><strong>Country : </strong> {{  this.copybillingData.country}}</p> 
+                        <p><strong>PaymentMode : </strong> {{this.copybillingData.paymentMode}}</p>
+                        <p><strong>User_Id: </strong> {{  this.copybillingData.user_id}}</p>  
+                    </div>  
+                </div>
             </div>
         </div> 

@@ -33,7 +33,7 @@ var stripe = require('stripe')(keySecret);
 
 const sgMail = require('@sendgrid/mail');
  sgMail.setApiKey('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');
-
+//  sgMail.setApiKey('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')
 // by sendGrid send mail for fake
 module.exports.FakeMail=(req,res)=>{
     console.log("hel;lo get dat")
@@ -54,6 +54,18 @@ module.exports.FakeMail=(req,res)=>{
     });
 
 } 
+
+module.exports.testapi=(req,res)=>{
+    try{
+        if(req.body){
+            user.aggregate([{ $match: { "zip": 90210 }}]);
+        }else{
+            res.send({err:"somthing error in  req.body"})            
+        }
+    }catch{
+
+    }
+}
 
 module.exports.home=(req,res)=>{
     console.log("home ejs file")
@@ -104,7 +116,7 @@ module.exports.Signup=(req,res)=>{
                                             service: 'gmail',
                                             auth: {
                                                     user: 'jssaurabh.gupta786@gmail.com',
-                                                    pass: 'password'
+                                                    pass: 'Kumar@123'
                                                }
                                         });
                                         var maillist=[mydata.email, 'jssaurabh.gupta786@gmail.com'];
@@ -195,7 +207,7 @@ module.exports.Login=(req,res)=>{
                             console.log("tokennnnnnnnnnnnn",token)
                             res.status(200).send({ auth: true, token: token,data:'login successful' ,user_data});      
                         }
-                        else{
+                        else{ 
                             return res.send({message:'password not match'});
                         }
                     })  
@@ -254,7 +266,7 @@ module.exports.Contactus=(req,res)=>{
                         service: 'gmail',
                         auth: {
                             user: 'jssaurabh.gupta786@gmail.com',
-                            pass: 'password'
+                            pass: 'Kumar@123'
                         }
                     });
                     var maillist = [formData.email, 'jssaurabh.gupta786@gmail.com'];
@@ -301,7 +313,7 @@ module.exports.ForgetPassword=(req,res)=>{
                     service: 'gmail',
                     auth: {
                         user: 'jssaurabh.gupta786@gmail.com',
-                        pass: 'password'
+                        pass: 'Kumar@123'
                     }});
                 var maillist = [data.email, 'jssaurabh.gupta786@gmail.com'];
                 var mailOptions = {
@@ -736,49 +748,56 @@ module.exports.Admin=(req,res)=>{
 
 module.exports.Exmple=(req,res)=>{
     try{
-      async.series({
-          user: function(callback){
-              setTimeout(function(){
-                  user.find().then((result)=>{
-                      callback(null, result);
+        async.series({
+            user: function(callback){
+                setTimeout(function(){
+                    user.find().then((result)=>{
+                        callback(null, result);
 
-                  })
-                  
-              }, 300);
-          },
-          contactus: function(callback){
-              setTimeout(function(){
-                  Contactus.find().then((data)=>{
-                      callback(null, data);
-                  })
-                 
-              }, 200);
-          },
-          property: function(callback){
-              setTimeout(function(){
-                  propertyData.find().then((red)=>{
-                      callback(null, red);
-                  })
-                 
-              }, 100);
-          },
-      },
-      function(err, results) {
-          // results is now equals to: {one: 1, two: 2}
-          if(results){
-              console.log("hello data",results )
-              res.send(results)
-          }
-          else{
-              console.log("hello data somthing error" )
-              res.send({err:"somthinfg err"})
-          }
-         
-      });
-  }
-  catch{
+                    })
+                    
+                }, 400);
+            },
+            contactus: function(callback){
+                setTimeout(function(){
+                    Contactus.find().then((data)=>{
+                        callback(null, data);
+                    })
+                    
+                }, 300);
+            },
+            property: function(callback){
+                setTimeout(function(){
+                    propertyData.find().then((red)=>{
+                        callback(null, red);
+                    })
+                    
+                }, 200);
+            },
+            billingData:function(callback){
+                setTimeout(function(){
+                    BillingAddress.find().then((biiling)=>{
+                        callback(null,biiling)
+                    })
+                },100);
+            }
+        },
+        function(err, results) {
+            // results is now equals to: {one: 1, two: 2}
+            if(results){
+                console.log("hello data",results )
+                res.send(results)
+            }
+            else{
+                console.log("hello data somthing error" )
+                res.send({err:"somthinfg err"})
+            }
+            
+        });
+    }
+    catch{
       res.send({err:"somthinfg err found"})
-  }
+    }
 }
 
 module.exports.DeleteUserData=(req,res)=>{
@@ -883,6 +902,45 @@ module.exports.UpdateContactData=(req,res)=>{
     try{
         if(req.body){
             Contactus.updateOne({_id:req.body._id},{ $set : { name:req.body.name,email:req.body.email, contact:req.body.contact ,address:req.body.address,query:req.body.query}}).then((result)=>{
+                if(result){
+                     console.log("update data",result);
+                     
+                        res.send({res:result,message:"update successfully"})
+                }else{
+                    res.send({message:"update not successfully"})
+                }
+            })
+        }else{
+            res.send({error:"somthing problem"})
+        }
+    } 
+    catch{
+        res.send({error:"somthing problem in data"})    
+    }
+}
+module.exports.DeleteBillingData=(req,res)=>{
+    try{
+        console.log("req user id",req.query.contact_id)
+        BillingAddress.deleteOne({_id:req.query.billing_id}).then((result)=>{
+            if(result){
+                    console.log("data delete resu;lt",result)
+                    res.send({res:result,message:"data delete successfull"})
+            }else{
+                console.log("data not delete resu;lt",result)
+                res.send({res:result,message:"data not delete"})
+            }
+        })
+    }
+    catch{
+        res.send({message:"somthing went to error"})  
+    }
+}
+module.exports.UpdateBillingData=(req,res)=>{
+    console.log("UpdatebillingData",req.body);
+    try{
+        if(req.body){
+            console.log("inside if condition");
+            BillingAddress.updateOne({_id:req.body._id},{ $set : { firstName:req.body.firstName,lastName:req.body.lastName, mobile:req.body.mobile ,address:req.body.address,city:req.body.city,state:req.body.state,postcode:req.body.postcode,country:req.body.country}}).then((result)=>{
                 if(result){
                      console.log("update data",result);
                      

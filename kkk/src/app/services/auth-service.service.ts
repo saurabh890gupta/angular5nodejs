@@ -166,4 +166,16 @@ export class AuthServiceService {
       console.log('URL sdfss',URL);
       return this.http.post(URL,httpOptions);
     }
+    updateBillingData(billingdata){
+      console.log("billingdata billingdata data ",billingdata);
+      const URL=this.config.url + 'updateBillingData';
+      console.log('URL sdfss',URL);
+      return this.http.post(URL,billingdata,httpOptions);
+    }
+    deleteBillingdata(id,ind){
+      console.log("hello get data ",id,ind)
+      const URL=this.config.url + 'deleteBillingData?billing_id='+id+'';
+      console.log('URL sdfss',URL);
+      return this.http.post(URL,httpOptions);
+    }
 }

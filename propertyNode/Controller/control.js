@@ -55,17 +55,6 @@ module.exports.FakeMail=(req,res)=>{
 
 } 
 
-module.exports.testapi=(req,res)=>{
-    try{
-        if(req.body){
-            user.aggregate([{ $match: { "zip": 90210 }}]);
-        }else{
-            res.send({err:"somthing error in  req.body"})            
-        }
-    }catch{
-
-    }
-}
 
 module.exports.home=(req,res)=>{
     console.log("home ejs file")

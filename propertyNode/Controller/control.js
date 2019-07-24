@@ -27,8 +27,8 @@ var nodemailer = require('nodemailer');
 const path   = require('path');''
 
 
-const keyPublishable = 'pk_test_GJR0iwIfVvYV5GDXkEeVxre2009TD5qmrX';
-const keySecret = 'sk_test_Xy2CBKqtHE9bjrihdYc42fja00Vr3PZr0N';
+const keyPublishable = '';
+const keySecret = '';
 var stripe = require('stripe')(keySecret);
 
 const sgMail = require('@sendgrid/mail');

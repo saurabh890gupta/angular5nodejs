@@ -41,6 +41,10 @@ export class LoginComponent implements OnInit {
   
  // isLoggedIn=localStorage.loggedIn ;
   onLogin(obj){
+    if(obj.uname=='' ||obj.pass==''){
+    alert("fill all fields") 
+    return false
+  }
     this.formData.email=obj.uname,
     this.formData.password=obj.pass
     console.log("login data find",this.formData)

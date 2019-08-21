@@ -29,6 +29,7 @@
               <li><a routerLink="/about">Services</a></li>
               <li><a >Term</a></li> 
               <li><a routerLink="/contact">Contact us</a></li>
+              <li *ngIf="isLoggedIn=='true'"><a (click)="sendOtp()" routerLink="/resSetPass">Change password</a></li>
             </ul>
           </div>
         </div>

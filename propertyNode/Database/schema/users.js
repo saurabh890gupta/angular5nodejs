@@ -26,6 +26,8 @@ var users = new Schema({
     remember:Boolean,
     vrifivation_token:String,
     token: String,
+    otp:String,
+    otpTime:Number,
     account_status:Number,
 },{collection:'Users'});
 

@@ -16,7 +16,7 @@ const Contactus=mongoose.model('Contactus');
 const propertyData=mongoose.model('propertySchema');
 const BillingAddress=mongoose.model('BillingAddress');
 const Admin=mongoose.model('Admin');
-// for signup use
+// for sigup use
 var bcrypt = require('bcryptjs');
 var saltRounds=10;
 var async = require("async");
@@ -24,11 +24,12 @@ var jwt = require('jsonwebtoken'); // used to create, sign, and verify tokens
 var config = require('./config');
 var upload=require('./upload');
 var nodemailer = require('nodemailer');
-const path   = require('path');''
+const path   = require('path');
+var Cryptr=require('cryptr');
+cryptr=new Cryptr('devnami');
 
-
-const keyPublishable = '';
-const keySecret = '';
+const keyPublishable = 'pk_test_GJR0iwIfVvYV5GDXkEeVxre2009TD5qmrX';
+const keySecret = 'sk_test_Xy2CBKqtHE9bjrihdYc42fja00Vr3PZr0N';
 var stripe = require('stripe')(keySecret);
 
 const sgMail = require('@sendgrid/mail');
@@ -55,11 +56,29 @@ module.exports.FakeMail=(req,res)=>{
 
 } 
 
+module.exports.testapi=(req,res)=>{
+    try{
+        if(req.body){
+            user.aggregate([{ $match: { "zip": 90210 }}]);
+        }else{
+            res.send({err:"somthing error in  req.body"})            
+        }
+    }catch{
+
+    }
+}
 
 module.exports.home=(req,res)=>{
     console.log("home ejs file")
     res.render('home');
 }
+
+module.exports.passChange=(req,res)=>{
+    var khhh=cryptr.encrypt(req.body.pass);
+    var hhhk=cryptr.decrypt(khhh);
+    console.log("hhhhhhhhhhhhh", khhh,hhhk);
+}
+
 
 module.exports.Signup=(req,res)=>{
     console.log("req accept",req.body);
@@ -105,7 +124,7 @@ module.exports.Signup=(req,res)=>{
                                             service: 'gmail',
                                             auth: {
                                                     user: 'jssaurabh.gupta786@gmail.com',
-                                                    pass: ''
+                                                    pass: 'Kumar@123'
                                                }
                                         });
                                         var maillist=[mydata.email, 'jssaurabh.gupta786@gmail.com'];
@@ -170,7 +189,7 @@ module.exports.ActivateAccount=(req,res)=>{ //http://localhost:5050/api/activate
 
 }
 module.exports.Login=(req,res)=>{
-    console.log("login body",req.body)
+    console.log("login body",req.body,req.formData)
     try{
         user.findOne({email:req.body.email}).then((result)=>{
             console.log("result find",result)
@@ -255,7 +274,7 @@ module.exports.Contactus=(req,res)=>{
                         service: 'gmail',
                         auth: {
                             user: 'jssaurabh.gupta786@gmail.com',
-                            pass: ''
+                            pass: 'Kumar@123'
                         }
                     });
                     var maillist = [formData.email, 'jssaurabh.gupta786@gmail.com'];
@@ -302,7 +321,7 @@ module.exports.ForgetPassword=(req,res)=>{
                     service: 'gmail',
                     auth: {
                         user: 'jssaurabh.gupta786@gmail.com',
-                        pass: ''
+                        pass: 'Kumar@123'
                     }});
                 var maillist = [data.email, 'jssaurabh.gupta786@gmail.com'];
                 var mailOptions = {
@@ -654,16 +673,57 @@ module.exports.GetAddress=(req,res)=>{
 
 module.exports.Payme=(req,res)=>{
     console.log("body for payment",req.body.id)
-    varcharge=stripe.charges.create({amount:230000,currency:'gbp',source:req.body.id},(err,charge)=>{
-        if(err){
-          console.log("dfkgjdfkgjkldfjgldfhgjdfkhgdfg",err)
-          res.send({err:"err data find"})
-        }
-        else{
-            console.log("response andar gya data")
-        res.json({success :true,message :"Payment Done"})
-        }
-    });
+    // varcharge=stripe.charges.create({amount:230000,currency:'gbp',source:req.body.id},(err,charge)=>{
+    //     if(err){
+    //       console.log("dfkgjdfkgjkldfjgldfhgjdfkhgdfg",err)
+    //       res.send({err:"err data find"})
+    //     }
+    //     else{
+    //         console.log("response andar gya data")
+    //     res.json({success :true,message :"Payment Done"})
+    //     }
+    // });
+
+
+        stripe.customers.create({email:'sau@gmail1.com',name:'kumar',phone:8999080000},function(err, customer) {
+            console.log('err',err,'res',customer);
+            res.send({customer})
+            if(customer.id){
+                console.log("hello data ",customer.id)
+                stripe.tokens.create({card: { number: '5200828282828210', exp_month: 11, exp_year: 2021, cvc: '123'}},function(err, token) {
+                    console.log(err,token.id)
+                    if(customer.id && token.id){
+                        console.log("inside if condition",customer.id,token.id)
+                        stripe.customers.createSource(customer.id,{source: token.id},function(err, source) {
+                                  // asynchronously called
+                                  console.log("source",source)
+                        });
+                    }
+                });
+            }
+        });
+     
+
+        
+                
+      
+        //   
+        // stripe.tokens.create({
+        //         card: {
+        //           number: '5200828282828210',
+        //           exp_month: 11,
+        //           exp_year: 2021,
+        //           cvc: '123'
+        //         }
+        //       }, function(err, token) {
+        //           console.log(err,token)
+        //       });
+            
+    
+           
+        
+
+
 
     // let amount = 500;
 
@@ -944,5 +1004,150 @@ module.exports.UpdateBillingData=(req,res)=>{
     } 
     catch{
         res.send({error:"somthing problem in data"})    
+    }
+}
+
+module.exports.verifyToken=(req,res,next)=>{
+    console.log(req.headers.authorization,"fgdfg")
+    if(!req.headers.authorization) {
+        return res.status(401).send('Unauthorized request')
+      }
+      let token = req.headers.authorization.split(' ')[1]
+      if(token === 'null') {
+        return res.status(401).send('Unauthorized request')    
+      }
+      let payload = jwt.verify(token, config.secret)
+      if(!payload) {
+        return res.status(401).send('Unauthorized request')    
+      }
+      req.userId = payload.subject
+      next()
+
+}
+function generateOTP() {  
+    var digits = '0123456789'; 
+    let OTP = ''; 
+    for (let i = 0; i < 4; i++ ) { 
+        OTP += digits[Math.floor(Math.random() * 10)]; 
+    } 
+    return OTP; 
+} 
+  
+var moment = require('moment');
+
+module.exports.changePasswordOtp=(req,res)=>{
+    console.log("hello",req.query)
+    try{
+        if(req.query.email==""){
+            console.log("email not find");
+            res.send({error:"email required"})
+            return false;
+        }
+        else{
+
+            user.findOne({email:req.query.email}).then((result)=>{
+                if(result){
+                    var date2 = new Date();
+                    var otpTime=date2.valueOf()
+                    var otp=generateOTP()
+                    console.log("ggggg",otpTime,otp);
+                    
+                    var transporter = nodemailer.createTransport({
+                        service: 'gmail',
+                        auth: {
+                            user: 'jssaurabh.gupta786@gmail.com',
+                            pass: 'Kumar@123'
+                        }
+                    });
+                    var maillist = [req.query.email, 'jssaurabh.gupta786@gmail.com'];
+                    var mailOptions = {
+                        from: 'jssaurabh.gupta786@gmail.com',
+                        to: maillist,
+                        subject: 'Sending Email using saurabhProperty',
+                        html:'<p><strong>otp valid for 15 min</strong></p></br>'+'<p><strong style="color:red">your otp is</strong> : '+otp+'</p>'
+    
+                    };
+                    transporter.sendMail(mailOptions, function (error, info) {
+                        if (error) {
+                            console.log(error);
+                        }
+                        else {
+                            console.log('Email sent: ' + info.response);
+                        }
+                    });
+                    user.updateOne({email:req.query.email},{$set:{otp:otp,otpTime:otpTime}}).then((data)=>{
+                        if(data){
+                            res.send({message:"otp send in mail"})
+                        }
+                        else{
+                            res.send({message:"problem save otp"})
+                        }
+                    })
+                  
+                
+                }
+                else{
+                    res.send({message:"email find error for otp"})  
+                }
+                
+            })
+
+                
+
+        }
+    }catch{
+        res.send({error:"somthing problem send otp"})    
+    }
+
+}
+
+module.exports.verifyOtpPssword=(req,res)=>{
+    console.log("hello data",req.body)
+    try{
+        if(req.body){
+                user.findOne({email:req.body.email,otp:req.body.otp}).then((data)=>{
+                    console.log("data aya",data)
+                    if(data){
+                        var date2 = new Date();
+                        var otpTime1=date2.valueOf();
+                        var start=moment(otpTime1);
+                        var end=moment(data.otpTime);
+                        var duration = moment.duration(end.diff(start));
+                        var hours = duration.asMinutes();
+                        console.log(hours,"heyy33")
+                        var posNum = (hours < 0) ? hours * -1 : hours;
+                        console.log(posNum,"posNum")
+                        var otpTimeDiff=Math.round(posNum)
+                        console.log("hellofhffff",Math.round(posNum))
+                        if(otpTimeDiff<=15){
+                            console.log("hello get data")
+                                bcrypt.hash(req.body.password,  saltRounds, function(err, hash) {
+                                    console.log(hash,"hash hash hash")
+                                    user.updateOne({email:req.body.email},{$set:{password:hash,repeatpassword:hash}}).then((data)=>{
+                                        if(data){
+                                        console.log(data,"updatedata in")
+                                        res.send({message:"password change successfully"});
+                                        }
+                                        else{
+                                            res.send({error:"somthing update problem"})   
+                                        }
+                                    })
+                                })
+                        }
+                        else{
+                            console.log("otp session expired")
+                            res.send({error:"otp session expired"})   
+                        }
+                    }
+                    else{
+                        res.send({error:"otp not match"})  
+                        return false;
+                    }
+                })
+        }else{
+            res.send({error:"somthing problem reqbody"})  
+        }
+    }catch{
+        res.send({error:"somthing problem coming data"})  
     }
 }

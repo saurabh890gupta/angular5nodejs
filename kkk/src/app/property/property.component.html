@@ -45,26 +45,26 @@
                                                   </div>
                                                   
                                                   <div class="col-md-8">
-                                                      <div class="form-group">
+                                                        <div class="form-group">
                                                           <label>Property name <small>(required)</small></label>
                                                           <input name="propertyname" type="text" class="form-control" placeholder="Super villa ..." [(ngModel)]="property.propertyname">
                                                       
-                                                      </div>
-                                                      <div class="form-group">
+                                                        </div>
+                                                        <div class="form-group">
                                                           <label>Property price <small>(required)</small></label>
                                                           <input name="propertyprice" type="text" class="form-control" ref="propertyprice" id="propertyprice" placeholder="3330000" [(ngModel)]="property.propertyprice"  >
                                                       
-                                                      </div> 
-                                                      <div class="form-group">
+                                                        </div> 
+                                                        <div class="form-group">
                                                           <label>Telephone <small>(empty if you wanna use default phone number)</small></label>
-                                                          <input name="phone" type="text" class="form-control" id="phone" min="10" maxLength="10" ref="phone"  placeholder="+632-221-2221" [(ngModel)]="property.phone" (keyup)="PhoneCheck($event)">
-                                                          <p id="phonevarify"></p>
-                                                        </div>
+                                                          <input name="phone" type="text" class="form-control" id="phone" min="10" maxlength="10" ref="phone"  placeholder="+632-221-2221" [(ngModel)]="property.phone" >
+                                                                <!-- <p id="phonevarify"></p> -->
+                                                        </div> 
       
                                                       <!-- <p><a class="btn btn-primary btn-lg" role="button">Learn more</a></p> -->
                                                   </div>
                                               </div>
-                                              <div class="space"></div>
+                                                <div class="space"></div>
                                                   <div class="pull-right">
                                                       <a (click)="setTab(2)" class='btn btn-next btn-primary' id="next" data-toggle="tab">next </a>
                                                   </div>

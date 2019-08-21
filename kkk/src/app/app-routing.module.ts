@@ -19,10 +19,11 @@ import { CheckoutComponent } from './checkout/checkout.component';
 import { PaymentpageComponent } from './paymentpage/paymentpage.component';
 import { AdminComponent } from './admin/admin.component';
 import { AdminPanelComponent } from './admin-panel/admin-panel.component';
+import {AuthGaurdService} from './services/auth-gaurd.service';
+import { ResetpasswordComponent } from './resetpassword/resetpassword.component';
 
 const routes: Routes = [
   { 
-
     path: '', 
     component: HomeComponent,
     pathMatch:'full', 
@@ -94,7 +95,9 @@ const routes: Routes = [
   {
     path: 'openCart',
     pathMatch:'full',
-    component: OpenCartComponent
+    component: OpenCartComponent,
+    canActivate:[AuthGaurdService]
+
    
   },
   {
@@ -105,8 +108,16 @@ const routes: Routes = [
   },
   {
     path: 'Paymentpage',
-    pathMatch:'full',
-    component: PaymentpageComponent
+    // pathMatch:'full',
+    component: PaymentpageComponent,
+    canActivate:[AuthGaurdService]
+   
+  },
+  {
+    path: 'resSetPass',
+    // pathMatch:'full',
+    component: ResetpasswordComponent,
+    canActivate:[AuthGaurdService]
    
   },
 

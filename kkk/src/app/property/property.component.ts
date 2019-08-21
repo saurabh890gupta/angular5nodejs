@@ -203,20 +203,20 @@ propertySubmit(property){debugger
           }
     }
   }
-  PhoneCheck(event) {
-    const value=event.target.value;
-    console.log("jejsdjjjs",value);
-    var regex="^([6-9]){10}$";
-    var text="Number should be 10 degits and Not Start From [0-5]";
-    if(!(value.match(regex))){
-      document.getElementById("phonevarify").innerHTML=text;
-      return false;
-    }
-    else{
-      document.getElementById("phonevarify").innerHTML="";
-      this.property.phone=value;
-      console.log("sddddddddddddddd", this.property.phone)
-      return false;
-    }
-  }
+  // PhoneCheck(event) {
+  //   const value=event.target.value;
+  //   console.log("jejsdjjjs",value);
+  //   var regex="^([6-9]){10}$";
+  //   var text="Number should be 10 degits and Not Start From [0-5]";
+  //   if(!(value.match(regex))){
+  //     document.getElementById("phonevarify").innerHTML=text;
+  //     return false;
+  //   }
+  //   else{
+  //     document.getElementById("phonevarify").innerHTML="";
+  //     this.property.phone=value;
+  //     console.log("sddddddddddddddd", this.property.phone)
+  //     return false;
+  //   }
+  // }
 }

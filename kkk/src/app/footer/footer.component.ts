@@ -58,4 +58,16 @@ export class FooterComponent implements OnInit {
       alert("plz enter email")
     }
   }
+
+  sendOtp(){
+    console.log( this.userEmail,"this.user_email");
+    this.authService.changPasswordOtp(this.userEmail).subscribe((data:any)=>{
+      if(data){
+        console.log(data,"found");
+        alert("otp send your email")
+      }else{
+        console.log("data errror");
+      }
+    })
+  }
 }

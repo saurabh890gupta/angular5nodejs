@@ -78,14 +78,14 @@ export class CheckoutComponent implements OnInit {
     {id: 18, name: "Nagaland"},
     {id: 19, name: "Odisha"},
     {id: 20, name: "Punjab"},
-    {id: 20, name: "Rajasthan"},
-    {id: 20, name: "Sikkim"},
-    {id: 20, name: "Tamil Nadu"},
-    {id: 20, name: "Telangana"},
-    {id: 20, name: "Tripura"},
-    {id: 20, name: "Uttarakhand"},
-    {id: 20, name: "Uttar Pradesh"},
-    {id: 20, name: "West Bengal"},
+    {id: 21, name: "Rajasthan"},
+    {id: 22, name: "Sikkim"},
+    {id: 23, name: "Tamil Nadu"},
+    {id: 24, name: "Telangana"},
+    {id: 25, name: "Tripura"},
+    {id: 26, name: "Uttarakhand"},
+    {id: 27, name: "Uttar Pradesh"},
+    {id: 28, name: "West Bengal"},
     ];
     country=[
       {id: 0, name: "India"},
@@ -100,10 +100,11 @@ export class CheckoutComponent implements OnInit {
       else{
         console.log("check out data find",checkOut)
         this.authService.submitCheckOut(checkOut,this.user_id).subscribe((data:any)=>{
+          console.log("data find submitCheckOut555555",data)
           if(data){
             console.log("data find submitCheckOut555555",data)
               console.log("data find submitCheckOut",data.data._id)
-              location.reload();
+              // location.reload();
               this.router.navigate(['/Paymentpage'], { queryParams: { sum:this.sum, addressDataId:data.data._id,} });
             
               }

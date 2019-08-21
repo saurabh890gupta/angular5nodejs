@@ -25,6 +25,10 @@ obj={
 }
 isLoggedIn:any;
   onSubmit(obj){
+    if(obj.name=='' ||obj.email=='' ||obj.pass==''||obj.repeatPass==''){
+      alert("fill all fields") 
+      return false
+    }
     console.log("hello data ",obj)
     this.obj.name=obj.name,
     this.obj.email=obj.email,

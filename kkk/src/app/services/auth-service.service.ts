@@ -2,11 +2,14 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Config } from '../config';
 import { Router } from '@angular/router';
-import { config } from 'rxjs';
+// import {AuthTokenService} from '../services/auth-token.service'
+// import { config } from 'rxjs';
+
 const httpOptions = {
   headers: new HttpHeaders({
     'Content-Type': 'application/json',
-
+    'authorization': `Bearer ${sessionStorage.getItem('token')}`
+    // 'authorization':'bearer ' + sessionStorage.getItem('token')
   })
 };
 // const httpOption = {
@@ -26,9 +29,12 @@ export class AuthServiceService {
   constructor(
     private http: HttpClient,
     private config:Config,
-    private router: Router
+    private router: Router,
+    // private service1: AuthTokenService
     ){
-     
+      // this.service1.intercept;
+      // console.log('after service 1 function',  this.service1.intercept);
+      
      }
     
     signupSubmit(obj){
@@ -47,6 +53,7 @@ export class AuthServiceService {
       return this.http.get(URL, httpOptions);
     }
     contactSubmit(obj){
+      console.log("hello get contact")
       const URL=this.config.url + 'contactus';
       return this.http.post(URL,obj,httpOptions);
     }
@@ -177,5 +184,17 @@ export class AuthServiceService {
       const URL=this.config.url + 'deleteBillingData?billing_id='+id+'';
       console.log('URL sdfss',URL);
       return this.http.post(URL,httpOptions);
+    }
+    changPasswordOtp(email){
+      console.log("hello get data ",email)
+      const URL=this.config.url + 'changePasswordOtp?email='+email+'';
+      console.log('URL sdfss',URL);
+      return this.http.post(URL,httpOptions);
+    }
+    verifyOtpPssword(formdata){
+      console.log("hello formdata ",formdata)
+      const URL=this.config.url + 'verifyOtpPssword';
+      console.log('URL sdfss',URL);
+      return this.http.post(URL,formdata,httpOptions); 
     }
 }

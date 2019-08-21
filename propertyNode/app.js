@@ -1,6 +1,7 @@
 const express=require('express');
 const app=express();
 const port =5050;
+// var port=process.env.PORT || 5050;
 const route1=require('./Router/route');
 var mongoose = require('mongoose');
 var cors = require('cors');

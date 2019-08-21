@@ -32,6 +32,9 @@ import { RxReactiveFormsModule } from "@rxweb/reactive-form-validators";
 import { AdminComponent } from './admin/admin.component';
 import { AdminPanelComponent } from './admin-panel/admin-panel.component';
 import {NgxPaginationModule} from 'ngx-pagination';
+import{AuthTokenService} from '../app/services/auth-token.service';
+import { ResetpasswordComponent } from './resetpassword/resetpassword.component';
+
 // import { AuthService , AuthServiceConfig,FacebookLoginProvider, GoogleLoginProvider, LinkedinLoginProvider, SocialLoginModule} from 'ng4-social-login';
 // const config = new AuthServiceConfig([
 //   {
@@ -72,6 +75,8 @@ import {NgxPaginationModule} from 'ngx-pagination';
     PaymentpageComponent,
     AdminComponent,
     AdminPanelComponent,
+    ResetpasswordComponent,
+ 
    
    
   ],
@@ -97,6 +102,7 @@ import {NgxPaginationModule} from 'ngx-pagination';
     Config,
     AuthServiceService,
     HttpClient,
+    AuthTokenService
     // {provide:AuthServiceConfig,useFactory:providerConfig}
   ],
   bootstrap: [AppComponent]
